@@ -34,19 +34,19 @@ def create_transacao():
     preco_unitario = data.get("preco_unitario")
 
     if not (cliente_id and codigo_acao and quantidade and preco_unitario):
-        return jsonify({"Problema nos campos"}), 400
+        return jsonify({"Erro": "Problema nos campos"}), 400
 
     try:
         response = requests.get(f"{USER_API_URL}/{cliente_id}", timeout=5)
         
         if response.status_code != 200:
-             return jsonify({"Cliente não encontrado"}), 404
+             return jsonify({"Erro": "Cliente não encontrado"}), 404
         
         dados_usuario = response.json() 
         email_cliente = dados_usuario.get("email") 
         
     except requests.exceptions.RequestException:
-        return jsonify({"Falha na consulta de api"}), 500
+        return jsonify({"Erro": "Falha na consulta de api"}), 500
 
 
     nova_transacao = {
@@ -71,9 +71,9 @@ def delete_transacao(id):
     resultado = transacoes_collection.delete_one({"id": id})
 
     if resultado.deleted_count == 0:
-        return jsonify({"Não encontrou transação"}), 404
+        return jsonify({"Erro": "Transação não encontrada"}), 404
 
-    return jsonify({"Transação removida"}), 200
+    return jsonify({"Erro": "Transação removida"}), 200
 
 
 if __name__ == '__main__':
