@@ -1,0 +1,47 @@
+name: GitHub Actions - Deploy API Transacoes
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: "nicolasvolf"
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5 
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true 
+          tags: nicolasvolf/api-transacoes:${{ github.sha }}
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master 
+        with:
+          host: ${{ secrets.HOST_TEST }}
+          username: "ubuntu" 
+          key: ${{ secrets.KEY_TEST }}
+          port: 22
+          script: | 
+            docker stop api-transacoes || true
+            docker rm --force api-transacoes || true
+            
+            docker run -d -p 8080:5001 --network=rede --name api-transacoes nicolasvolf/api-transacoes:${{ github.sha }}
