@@ -39,7 +39,7 @@ def create_transacao():
     try:
         response = requests.get(f"{USER_API_URL}/{cliente_id}", timeout=5)
         
-        if response.status_code != 200:
+        if response.status_code != 201:
              return jsonify({"Erro": "Cliente não encontrado"}), 404
         
         dados_usuario = response.json() 
