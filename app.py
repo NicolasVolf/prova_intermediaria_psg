@@ -16,7 +16,7 @@ CORS(app)
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongo-connections:27017/")
 client = MongoClient(MONGO_URI)
 db = client['ecommerce']
-produtos_collection = db['produtos']
+products_collection = db['products']
 
 AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN", "")
 AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE", "")
@@ -42,7 +42,7 @@ def auth_required(roles=None):
                 key = next(k for k in jwks["keys"] if k["kid"] == kid)
                 payload = jwt.decode(token, key, algorithms=["RS256"],
                                      audience=AUTH0_AUDIENCE, issuer=f"https://{AUTH0_DOMAIN}/")
-            except (JWTError, StopIteration):
+            except (JWTError, StopIteration, Exception):
                 return jsonify({"error": "Token inválido"}), 401
 
             if roles and not any(r in payload.get(ROLES_CLAIM, []) for r in roles):
