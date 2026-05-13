@@ -40,14 +40,14 @@ jobs:
           username: "ubuntu" 
           key: ${{ secrets.KEY_TEST }}
           port: 22
-        script: |
-          docker stop api-transacoes || true
-          docker rm --force api-transacoes || true
-          docker pull nicolasvolf/api-transacoes:${{ github.sha }}
-          docker run -d -p 8080:5001 \
-            --network=rede \
-            --name api-transacoes \
-            -e AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }} \
-            -e AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }} \
-            -e MONGO_URI=mongodb://mongo-connections:27017/ \
-            nicolasvolf/api-transacoes:${{ github.sha }}
+          script: |
+            docker stop api-transacoes || true
+            docker rm --force api-transacoes || true
+            docker pull nicolasvolf/api-transacoes:${{ github.sha }}
+            docker run -d -p 8080:5001 \
+              --network=rede \
+              --name api-transacoes \
+              -e AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }} \
+              -e AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }} \
+              -e MONGO_URI=mongodb://mongo-connections:27017/ \
+              nicolasvolf/api-transacoes:${{ github.sha }}
