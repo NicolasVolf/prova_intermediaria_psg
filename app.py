@@ -9,8 +9,10 @@ from jose import JWTError, jwt
 from datetime import datetime, timezone
 import os
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongo-connections:27017/")
 client = MongoClient(MONGO_URI)
 db = client['ecommerce']
